@@ -27,7 +27,7 @@ def rewindPriceChangeToPrice(data, initial = 100):
     return list(reduce(lambda x,y:  x + [ x[-1] / (y+1.0) ], data, list([initial]) ) )
 
 
-def debugPlot(data, debug, timeDomains = [1,5,15,30,60]):
+def debugPlot(data, debug, timeDomains = [1,5,15,30]):
     sample1Min = data[0:181]
     
     #print(sample90Min)
@@ -73,12 +73,13 @@ def debugPlot(data, debug, timeDomains = [1,5,15,30,60]):
         end = ((ind+1)*180)+1
         sampleXMin = data[start:end]
         sampleXMin = sampleXMin[::2]
-        remainder = time.minute % t
-        print(remainder)
+        remainder = (60+time.minute) % t
+        print("x: "+str(60+time.minute))
+        print("remainder: " + str(remainder) )
         print(graph1[-(remainder+1)])
 
         rewindPriceX = rewindPriceChangeToPrice(sampleXMin[::-1], initial=graph1[-(remainder+1)])
-        print(rewindPriceX)
+        #print(rewindPriceX)
         extra = 90*t - 90*timeDomains[ind-1]
         print("extra: "+ str(extra))
         series = [([None] * extra) + x for x in series]
