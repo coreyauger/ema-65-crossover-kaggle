@@ -13,12 +13,10 @@ from keras.layers import Dense
 from keras.layers import LSTM
 from functools import reduce
 
-
 # fix random seed for reproducibility
 np.random.seed(90210)
 
-def loadData(subset = -1, loadDebug = False):    
-    path =r'/home/suroot/Documents/train/reg/22222c82-59d1-4c56-a661-3e8afa594e9a' # path to data
+def loadData(path, subset = -1, loadDebug = False):        
     allFiles = glob.glob(os.path.join(path, "data_*.csv"))
     if(subset > 0):
         allFiles = allFiles[0:subset]
@@ -34,12 +32,11 @@ def loadData(subset = -1, loadDebug = False):
                 debug.append(json.load(f))       
     return (np.array(data), debug)
     
-
  
-
 subset = 38
 
-data, debug = loadData(subset, loadDebug=True)
+path =r'/home/suroot/Documents/train/reg/22222c82-59d1-4c56-a661-3e8afa594e9a' # path to data
+data, debug = loadData(path, subset, loadDebug=True)
 print(data.shape)
 
 

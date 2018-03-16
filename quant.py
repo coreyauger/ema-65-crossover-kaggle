@@ -1,6 +1,7 @@
 
 from functools import reduce
 import matplotlib.pyplot as plt
+from dateutil import parser
 
 
 def calculateEma(price, interval = 9, startEma = -1):
@@ -26,7 +27,7 @@ def rewindPriceChangeToPrice(data, initial = 100):
     return list(reduce(lambda x,y:  x + [ x[-1] / (y+1.0) ], data, list([initial]) ) )
 
 
-def debugPlot(data, debug, timeDomains = [1,5]):
+def debugPlot(data, debug, timeDomains = [1,5,15,30,60]):
     sample1Min = data[0:181]
     
     #print(sample90Min)
@@ -51,7 +52,6 @@ def debugPlot(data, debug, timeDomains = [1,5]):
     rewindEma15 = rewindEma(rewindPrice1, 15, startEma = ema15Data[0]["data"]["ema"]) 
     rewindEma65 = rewindEma(rewindPrice1, 65, startEma = ema65Data[0]["data"]["ema"]) 
     print("rewindPrice1: " + str(rewindPrice1[-1]))
-    print(rewindEma65)
     print("rewindEma15: " + str(rewindEma15[-1]))
     print("rewindEma65: " + str(rewindEma65[-1]))
 
@@ -60,10 +60,9 @@ def debugPlot(data, debug, timeDomains = [1,5]):
     print("Training Example: " + trainingExampleId)
     print("enter price: " + str(enterPrice))
     print("enter time: " + priceData[0]["time"])
+    time = parser.parse(priceData[0]["time"])
+    print(time.minute)
     graph1 = priceChangeToPrice(sample1Min, initial=rewindPrice1[-1])
-    
-    #print(graph)
-    #print(graph[-1])
     ema15 = calculateEma(graph1, 15, startEma=graph1[0]) 
     ema65 = calculateEma(graph1, 65, startEma=graph1[0]) 
     series = [graph1, ema65, ema15]
@@ -74,14 +73,19 @@ def debugPlot(data, debug, timeDomains = [1,5]):
         end = ((ind+1)*180)+1
         sampleXMin = data[start:end]
         sampleXMin = sampleXMin[::2]
-        rewindPriceX = rewindPriceChangeToPrice(sampleXMin[::-1], initial=priceData[0]["data"]["close"])
-        extra = 90*t - 90*timeDomains[ind-1]-timeDomains[ind-1] 
+        remainder = time.minute % t
+        print(remainder)
+        print(graph1[-(remainder+1)])
+
+        rewindPriceX = rewindPriceChangeToPrice(sampleXMin[::-1], initial=graph1[-(remainder+1)])
+        print(rewindPriceX)
+        extra = 90*t - 90*timeDomains[ind-1]
         print("extra: "+ str(extra))
-        series = [([graph1[0]] * extra) + x for x in series]
+        series = [([None] * extra) + x for x in series]
 
         graphX = priceChangeToPrice(sampleXMin, initial=rewindPriceX[-1])
         graphX = [[x]*t for x in graphX]
-        graphX = [val for sublist in graphX for val in sublist]
+        graphX = [val for sublist in graphX for val in sublist][remainder:]
         print(len(graphX))
         print(len(series[0]))
         series.append(graphX)
