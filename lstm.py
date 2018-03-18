@@ -45,17 +45,29 @@ print("sample " + str(sample))
 
 q.debugPlot(data[sample,:], debug[sample])
 
-
 batch_size=128
 nb_epoch = 1000
 
+Y = data[:,0]
+Y = np.reshape(Y, (Y.shape[0],1))
+print("Y shape: "+str(Y.shape))
+
+X = data[:,1:]
+X = np.reshape(X, (X.shape[0],450,2))
+print("X shape: "+str(X.shape))
+#data = np.resahpe(data, (data.shape[0],))
+print(X[0])
+
 # create and fit the LSTM network
 model = Sequential()
-model.add(Bidirectional(LSTM(90, input_shape=(90, 5), dropout=0.2, activation="tanh")) )
+#model.add(Bidirectional(LSTM(90, input_shape=(90, 5), dropout=0.2, activation="tanh")) )
+model.add(LSTM(90, input_shape=(450, 2), dropout=0.2, activation="tanh") )
 model.add(Dense(1))
 model.compile(loss='mean_squared_error', optimizer='adam', activation="idenity", metrics=['accuracy'])
 
 model.summary()
+
+print(data[0])
 
 # Train
 #history = model.fit(X_train, Y_train, nb_epoch=nb_epoch, batch_size=batch_size, shuffle=True, verbose=1)
