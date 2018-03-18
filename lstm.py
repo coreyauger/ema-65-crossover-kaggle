@@ -9,8 +9,7 @@ import json
 import pprint as pp
 import quant as q
 from keras.models import Sequential
-from keras.layers import Dense
-from keras.layers import LSTM
+from keras.layers import Dense, LSTM, Bidirectional
 from functools import reduce
 
 # fix random seed for reproducibility
@@ -47,11 +46,21 @@ print("sample " + str(sample))
 q.debugPlot(data[sample,:], debug[sample])
 
 
+batch_size=128
+nb_epoch = 1000
+
 # create and fit the LSTM network
-'''
 model = Sequential()
-model.add(LSTM(4, input_shape=(look_back, 1)))
+model.add(Bidirectional(LSTM(90, input_shape=(90, 5), dropout=0.2, activation="tanh")) )
 model.add(Dense(1))
-model.compile(loss='mean_squared_error', optimizer='adam')
-model.fit(trainX, trainY, epochs=100, batch_size=1, verbose=2)
-'''
+model.compile(loss='mean_squared_error', optimizer='adam', activation="idenity", metrics=['accuracy'])
+
+model.summary()
+
+# Train
+#history = model.fit(X_train, Y_train, nb_epoch=nb_epoch, batch_size=batch_size, shuffle=True, verbose=1)
+
+# Evaluate
+#evaluation = model.evaluate(X_test, Y_test, batch_size=batch_size, verbose=1)
+#print('Summary: Loss over the test dataset: %.2f, Accuracy: %.2f' % (evaluation[0], evaluation[1]))
+
