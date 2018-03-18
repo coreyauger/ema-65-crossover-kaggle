@@ -8,6 +8,7 @@ import random
 import json
 import pprint as pp
 import quant as q
+from sklearn.preprocessing import MinMaxScaler
 from keras.models import Sequential
 from keras.layers import Dense, LSTM, Bidirectional
 from functools import reduce
@@ -38,7 +39,6 @@ path =r'/home/suroot/Documents/train/reg/22222c82-59d1-4c56-a661-3e8afa594e9a' #
 data, debug = loadData(path, subset, loadDebug=True)
 print(data.shape)
 
-
 # verify that a random data point looks correct.
 sample = random.randint(0,subset-1)
 print("sample " + str(sample))
@@ -46,7 +46,10 @@ print("sample " + str(sample))
 q.debugPlot(data[sample,:], debug[sample])
 
 batch_size=128
-nb_epoch = 100
+nb_epoch = 500
+
+scaler = MinMaxScaler(feature_range=(-1, 1))
+data = scaler.fit_transform(data)
 
 Y_train = data[:,0]
 Y_train = np.reshape(Y_train, (Y_train.shape[0],1))
@@ -65,12 +68,11 @@ model.compile(loss='mean_squared_error', optimizer='adam', metrics=['accuracy'])
 
 model.summary()
 
-
 # Train
 history = model.fit(X_train, Y_train, epochs=nb_epoch, batch_size=batch_size, shuffle=True, verbose=1)
 
 # Evaluate train
-evaluation = model.evaluate(X_train, Y_train, batch_size=batch_size, verbose=1)
+evaluation = model.evaluate(X_train, Y_train, batch_size=batch_size, verbose=2)
 print('Summary: Loss over the test dataset: %.2f, Accuracy: %.2f' % (evaluation[0], evaluation[1]))
 
 # Evaluate test
