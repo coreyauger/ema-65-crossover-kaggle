@@ -46,33 +46,34 @@ print("sample " + str(sample))
 q.debugPlot(data[sample,:], debug[sample])
 
 batch_size=128
-nb_epoch = 1000
+nb_epoch = 100
 
-Y = data[:,0]
-Y = np.reshape(Y, (Y.shape[0],1))
-print("Y shape: "+str(Y.shape))
+Y_train = data[:,0]
+Y_train = np.reshape(Y_train, (Y_train.shape[0],1))
+print("Y shape: "+str(Y_train.shape))
 
-X = data[:,1:]
-X = np.reshape(X, (X.shape[0],450,2))
-print("X shape: "+str(X.shape))
-#data = np.resahpe(data, (data.shape[0],))
-print(X[0])
+X_train = data[:,1:]
+X_train = np.reshape(X_train, (X_train.shape[0],450,2))
+print("X shape: "+str(X_train.shape))
 
 # create and fit the LSTM network
 model = Sequential()
-#model.add(Bidirectional(LSTM(90, input_shape=(90, 5), dropout=0.2, activation="tanh")) )
-model.add(LSTM(90, input_shape=(450, 2), dropout=0.2, activation="tanh") )
-model.add(Dense(1))
-model.compile(loss='mean_squared_error', optimizer='adam', activation="idenity", metrics=['accuracy'])
+model.add(Bidirectional(LSTM(90, dropout=0.2, activation="tanh"), input_shape=(450, 2)) )
+#model.add(LSTM(90, input_shape=(450, 2), dropout=0.2, activation="tanh") )
+model.add(Dense(1, activation="linear"))
+model.compile(loss='mean_squared_error', optimizer='adam', metrics=['accuracy'])
 
 model.summary()
 
-print(data[0])
 
 # Train
-#history = model.fit(X_train, Y_train, nb_epoch=nb_epoch, batch_size=batch_size, shuffle=True, verbose=1)
+history = model.fit(X_train, Y_train, epochs=nb_epoch, batch_size=batch_size, shuffle=True, verbose=1)
 
-# Evaluate
+# Evaluate train
+evaluation = model.evaluate(X_train, Y_train, batch_size=batch_size, verbose=1)
+print('Summary: Loss over the test dataset: %.2f, Accuracy: %.2f' % (evaluation[0], evaluation[1]))
+
+# Evaluate test
 #evaluation = model.evaluate(X_test, Y_test, batch_size=batch_size, verbose=1)
 #print('Summary: Loss over the test dataset: %.2f, Accuracy: %.2f' % (evaluation[0], evaluation[1]))
 
