@@ -33,7 +33,7 @@ def loadData(path, subset = -1, loadDebug = False):
     return (np.array(data), debug)
     
  
-subset = 38
+subset = 32
 
 path =r'/home/suroot/Documents/train/reg/22222c82-59d1-4c56-a661-3e8afa594e9a' # path to data
 data, debug = loadData(path, subset, loadDebug=True)
