@@ -1,8 +1,28 @@
 
 from functools import reduce
+import numpy as np
 import matplotlib.pyplot as plt
 from dateutil import parser
+import glob
+import os
+import csv
+import json
 
+def loadData(path, subset = -1, loadDebug = False):        
+    allFiles = glob.glob(os.path.join(path, "data_*.csv"))
+    if(subset > 0):
+        allFiles = allFiles[0:subset]
+    data = []
+    debug = []
+    for file in allFiles:
+        print(file)
+        fileNum = file.split('/')[-1].replace("data_","").replace(".csv","")
+        with open(file, 'r') as f:
+            data.append([float(val) for sublist in list(csv.reader(f)) for val in sublist]) 
+        if loadDebug:       
+            with open(file.replace("data_"+fileNum+".csv","debug_"+fileNum+".csv")) as f:
+                debug.append(json.load(f))       
+    return (np.array(data), debug)
 
 def calculateEma(price, interval = 9, startEma = -1):
     #https://www.investopedia.com/ask/answers/122314/what-exponential-moving-average-ema-formula-and-how-ema-calculated.asp
