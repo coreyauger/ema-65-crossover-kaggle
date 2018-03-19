@@ -75,8 +75,8 @@ model.summary()
 history = model.fit(X_train, y_train, epochs=nb_epoch, batch_size=batch_size, shuffle=True, verbose=1)
 
 # Evaluate train
-evaluation = model.evaluate(X_train, y_train, batch_size=batch_size, verbose=2)
-print('Summary: Loss over the test dataset: %.2f, Accuracy: %.2f' % (evaluation[0], evaluation[1]))
+#evaluation = model.evaluate(X_train, y_train, batch_size=batch_size, verbose=2)
+#print('Summary: Loss over the test dataset: %.2f, Accuracy: %.2f' % (evaluation[0], evaluation[1]))
 
 # Evaluate test
 evaluation = model.evaluate(X_test, y_test, batch_size=batch_size, verbose=2)
