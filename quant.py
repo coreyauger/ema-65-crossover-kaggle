@@ -29,12 +29,8 @@ def rewindPriceChangeToPrice(data, initial = 100):
 
 def debugPlot(data, debug, timeDomains = [1,5,15,30]):
     sample1Min = data[0:181]
-    
-    #print(sample90Min)
-    print(sample1Min.shape)
     sample1Min = sample1Min[1::2]  # only want price
     
-    #print(sample90Min.shape)
     trigger = debug["Trigger"]["parent"][0]
     trainingExampleId = debug["TrainingExample"]["id"]
     symbol = debug["TrainingExample"]["symbol"]["sym"]
@@ -47,13 +43,13 @@ def debugPlot(data, debug, timeDomains = [1,5,15,30]):
     # we need to rewind these values through time now.
     rewindPrice1 = rewindPriceChangeToPrice(sample1Min[::-1], initial=priceData[0]["data"]["close"])
     
-    print("15: "+str(ema15Data[0]["data"]["ema"]))
-    print("65: "+str(ema65Data[0]["data"]["ema"]))
+    #print("15: "+str(ema15Data[0]["data"]["ema"]))
+    #print("65: "+str(ema65Data[0]["data"]["ema"]))
     rewindEma15 = rewindEma(rewindPrice1, 15, startEma = ema15Data[0]["data"]["ema"]) 
     rewindEma65 = rewindEma(rewindPrice1, 65, startEma = ema65Data[0]["data"]["ema"]) 
-    print("rewindPrice1: " + str(rewindPrice1[-1]))
-    print("rewindEma15: " + str(rewindEma15[-1]))
-    print("rewindEma65: " + str(rewindEma65[-1]))
+    #print("rewindPrice1: " + str(rewindPrice1[-1]))
+    #print("rewindEma15: " + str(rewindEma15[-1]))
+    #print("rewindEma65: " + str(rewindEma65[-1]))
 
     enterPrice = priceData[0]["data"]["close"]
     print("symbol: "+symbol)
@@ -74,41 +70,22 @@ def debugPlot(data, debug, timeDomains = [1,5,15,30]):
         sampleXMin = data[start:end]
         sampleXMin = sampleXMin[::2]
         remainder = (60+time.minute) % t
-        print("x: "+str(60+time.minute))
-        print("remainder: " + str(remainder) )
-        print(graph1[-(remainder+1)])
+        #print("x: "+str(60+time.minute))
+        #print("remainder: " + str(remainder) )
+        #print(graph1[-(remainder+1)])
 
         rewindPriceX = rewindPriceChangeToPrice(sampleXMin[::-1], initial=graph1[-(remainder+1)])
-        #print(rewindPriceX)
         extra = 90*t - 90*timeDomains[ind-1]
-        print("extra: "+ str(extra))
         series = [([None] * extra) + x for x in series]
 
         graphX = priceChangeToPrice(sampleXMin, initial=rewindPriceX[-1])
         graphX = [[x]*t for x in graphX]
         graphX = [val for sublist in graphX for val in sublist][remainder:]
-        print(len(graphX))
-        print(len(series[0]))
         series.append(graphX)
         ind = ind+1
-
-
     for x in series:
         plt.plot(x) 
     plt.show()  
-    '''
-    sample5Min = data[181:361]
-    sample5Min = sample5Min[::2]
-    rewindPrice5 = rewindPriceChangeToPrice(sample5Min[::-1], initial=priceData[0]["data"]["close"])
-    graph5 = priceChangeToPrice(sample5Min, initial=rewindPrice5[-1])
-    plt.plot(([graph1[0]] * 72*5) + graph1)
-    plt.plot(([graph1[0]] * 72*5) + ema65)
-    plt.plot(([graph1[0]] * 72*5) + ema15)
-    graph5 = [[x]*5 for x in graph5]
-    graph5 = [val for sublist in graph5 for val in sublist]
-    plt.plot(graph5)
-    plt.show()
-    '''
 
    
     
