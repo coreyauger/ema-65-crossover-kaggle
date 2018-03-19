@@ -34,7 +34,7 @@ def loadData(path, subset = -1, loadDebug = False):
     return (np.array(data), debug)
     
  
-subset = 10000
+subset = 1000
 
 path =r'/home/suroot/Documents/train/reg/22222c82-59d1-4c56-a661-3e8afa594e9a' # path to data
 data, debug = loadData(path, subset, loadDebug=False)
@@ -81,4 +81,16 @@ history = model.fit(X_train, y_train, epochs=nb_epoch, batch_size=batch_size, sh
 # Evaluate test
 evaluation = model.evaluate(X_test, y_test, batch_size=batch_size, verbose=2)
 print('Summary: Loss over the test dataset: %.2f, Accuracy: %.2f' % (evaluation[0], evaluation[1]))
+
+y_hat = model.predict(X_test, verbose=1)
+print(y_test.shape)
+print(y_hat.shape)
+plt.scatter(y_test, y_hat) 
+plt.show()  
+
+json_string = model.to_json()
+with open(path+"/model.json", 'w') as text_file:
+    print(json_string, file=text_file)
+
+model.save_weights(path+"/weights.hdf5")
 
