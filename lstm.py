@@ -10,6 +10,7 @@ import pprint as pp
 import quant as q
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
+from sklearn import preprocessing
 from keras.models import Sequential
 from keras.layers import Dense, LSTM, Bidirectional
 from functools import reduce
@@ -34,7 +35,7 @@ def loadData(path, subset = -1, loadDebug = False):
     return (np.array(data), debug)
     
  
-subset = 1000
+subset = 10000
 
 path =r'/home/suroot/Documents/train/reg/22222c82-59d1-4c56-a661-3e8afa594e9a' # path to data
 data, debug = loadData(path, subset, loadDebug=False)
@@ -49,7 +50,7 @@ batch_size=128
 nb_epoch = 5
 
 scaler = MinMaxScaler(feature_range=(-1, 1))
-data = scaler.fit_transform(data)
+data = preprocessing.scale(data) #scaler.fit_transform(data)
 
 y = data[:,0]
 y = np.reshape(y, (y.shape[0],1))
@@ -87,6 +88,8 @@ print(y_test.shape)
 print(y_hat.shape)
 plt.scatter(y_test, y_hat) 
 plt.show()  
+residuals = np.c_[y_test, y_hat]
+print(residuals)
 
 json_string = model.to_json()
 with open(path+"/model.json", 'w') as text_file:
